@@ -1,0 +1,344 @@
+<div class="container-fluid">
+
+  <div class="w-100 d-flex">
+    <h3 class="mt-2 d-inline-block me-auto">{{movies.length}}
+      películas</h3>
+    <h3 *ngIf="movies.length > 0" class="d-inline-block ms-auto pointer"
+        (click)="newMovie()"
+        data-bs-toggle="modal"
+        data-bs-target="#miModal"> Add movie
+      <i class="fas fa-plus-circle pointer"></i></h3>
+    <h3 *ngIf="movies.length == 0" class="d-inline-block ms-auto pointer"
+        (click)="newMovie()"
+        data-bs-toggle="modal"
+        data-bs-target="#miModalZero"> Add movie
+      <i class="fas fa-plus-circle pointer"></i></h3>
+  </div>
+<div *ngIf="movies.length > 0">
+  <div class="container"
+       *ngFor="let movie of movies">
+    <div class="row border rounded">
+      <div class="col-md-11">
+        <div (click)="loadMovie(movie)" data-bs-toggle="modal"
+             data-bs-target="#miModal" class="row mt-3 pt-2">
+          <div class="col-md-2">
+            <img src="{{movie.poster ||
+'assets/images/no-image-icon.jpg'}}" alt="{{movie.title}}">
+          </div>
+          <div class="col-md-9">
+            <h5>{{movie.title}}</h5>
+            <small class="text-danger">{{movie.genres}}</small>
+            <p><b>Director</b>: {{movie.director}} - <b>Year</b>:
+              {{movie.year}}</p>
+            <small>{{movie.plot}}</small>
+          </div>
+          <div class="col-md-1 align-self-center align-middle">
+            <small class="badge bg-success p-3">{{movie.imdb.rating}}</small>
+          </div>
+          <div class="pb-2"></div>
+        </div>
+      </div>
+
+      <div class="col-md-1 remove d-flex">
+        <h3 class="ms-auto align-self-center">
+          <i (click)="removeMovie(movie)"
+             class="fas fa-times"></i></h3>
+      </div>
+    </div>
+
+    <div class="mb-2"></div>
+
+  <!-- Fin del NgFor -->
+  <!-- Modal -->
+  <div class="modal fade" id="miModal"
+       tabindex="-1" aria-labelledby="miModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="miModalLabel">
+            {{editar?title:'New Movie'}}</h5>
+          <button type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"></button>
+
+        </div>
+        <form #formEdit="ngForm" [formGroup]="formMovie"
+              (ngSubmit)="onSubmit(formEdit)">
+          <div class="modal-body">
+            <div class="form-floating mb-3">
+              <input formControlName="title"
+                     type="text" class="form-control"
+                     id="title" value="{{title}}"
+                     placeholder="Title">
+              <label for="title">
+                Title</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input formControlName="year"
+                     type="number" class="form-control"
+                     id="year" value="{{year}}"
+                     placeholder="Year">
+              <label for="year">
+                Year</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input formControlName="director"
+                     type="text" class="form-control"
+                     id="director" value="{{director}}"
+                     placeholder="Director">
+              <label for="director">
+                Director</label>
+            </div>
+            <div class="row">
+              <div class="col-8">
+                <div class="form-floating mb-3">
+                  <input formControlName="poster"
+                         type="text" class="form-control"
+                         id="poster" value="{{poster}}"
+                         placeholder="Poster">
+                  <label for="poster">
+                    Poster</label>
+                </div>
+
+              </div>
+              <div class="col-4">
+                <img src="{{poster || 'assets/images/no-image-icon.jpg'}}"
+                     alt="...">
+              </div>
+            </div>
+            <div class="form-floating mb-3 mt-3">
+<textarea formControlName="plot"
+
+          rows="7"
+          class="form-control"
+          id="plot" value="{{plot}}">
+
+</textarea>
+              <label for="plot">
+                Plot</label>
+            </div>
+            <!-- select genres -->
+            <div *ngIf="editar">
+              <label for="Select">Genres</label>
+              <select class="form-select" id="Select"
+                      aria-label="Genres" multiple
+                      formControlName="genres">
+                <option *ngFor="let gen of genres"
+                        [value]="gen">
+                  {{gen}}</option>
+              </select>
+            </div>
+            <div *ngIf="!editar">
+              <label for="newSelect">Genres</label>
+              <select class="form-select" id="newSelect"
+                      aria-label="Genres" multiple
+                      formControlName="genres">
+                <option *ngFor="let gen of genres"
+                        [value]="gen">
+                  {{gen}}</option>
+              </select>
+            </div>
+
+            <!-- Add New Genre -->
+            <div class="row mt-3">
+              <div class="col-8">
+                <div [formGroup]="mynewGenre" class="form-floating mb-3">
+                  <input
+                    type="text" class="form-control"
+                    id="newGenre"
+                    formControlName="newGenre"
+                    placeholder="New Genre">
+                  <label for="newGenre">
+                    New Genre</label>
+                </div>
+
+              </div>
+              <div class="col-4 pt-2">
+                <h3><i class="fas fa-plus-circle pointer"
+                       (click)="addNewGenre(newGenre)"></i></h3>
+
+              </div>
+            </div>
+
+            <fieldset formGroupName="imdb">
+              <legend>IMDB</legend>
+              <div class="form-floating mb-3">
+                <input formControlName="rating"
+                       type="number" class="form-control"
+                       id="rating" value="{{rating}}"
+                       placeholder="Rating">
+                <label for="rating">
+                  Rating</label>
+              </div>
+              <div class="form-floating mb-3">
+                <input formControlName="votes"
+                       type="number" class="form-control"
+                       id="votes" value="{{votes}}"
+                       placeholder="Votes">
+                <label for="votes">
+                  Votes</label>
+              </div>
+            </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Close</button>
+            <button [disabled]="formEdit.invalid"
+              type="submit" class="btn btn-primary"
+                    data-bs-dismiss="modal">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+  <div *ngIf="movies.length == 0">
+    <div class="modal fade" id="miModalZero"
+         tabindex="-1" aria-labelledby="miModalLabelZero"
+         aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="miModalLabelZero">
+              {{editar?title:'New Movie'}}</h5>
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+
+          </div>
+          <form #formNew="ngForm" [formGroup]="formMovie"
+                (ngSubmit)="onSubmit(formNew)">
+            <div class="modal-body">
+              <div class="form-floating mb-3">
+                <input formControlName="title"
+                       type="text" class="form-control"
+                       id="titleZ" value="{{title}}"
+                       placeholder="Title">
+                <label for="titleZ">
+                  Title</label>
+              </div>
+              <div class="form-floating mb-3">
+                <input formControlName="year"
+                       type="number" class="form-control"
+                       id="yearZ" value="{{year}}"
+                       placeholder="Year">
+                <label for="yearZ">
+                  Year</label>
+              </div>
+              <div class="form-floating mb-3">
+                <input formControlName="director"
+                       type="text" class="form-control"
+                       id="directorZ" value="{{director}}"
+                       placeholder="Director">
+                <label for="directorZ">
+                  Director</label>
+              </div>
+              <div class="row">
+                <div class="col-8">
+                  <div class="form-floating mb-3">
+                    <input formControlName="poster"
+                           type="text" class="form-control"
+                           id="posterZ" value="{{poster}}"
+                           placeholder="Poster">
+                    <label for="posterZ">
+                      Poster</label>
+                  </div>
+
+                </div>
+                <div class="col-4">
+                  <img src="{{poster || 'assets/images/no-image-icon.jpg'}}"
+                       alt="...">
+                </div>
+              </div>
+              <div class="form-floating mb-3 mt-3">
+<textarea formControlName="plot"
+
+          rows="7"
+          class="form-control"
+          id="plotZ" value="{{plot}}">
+
+</textarea>
+                <label for="plotZ">
+                  Plot</label>
+              </div>
+              <!-- select genres -->
+              <div *ngIf="editar">
+                <label for="SelectZ">Genres</label>
+                <select class="form-select" id="SelectZ"
+                        aria-label="Genres" multiple
+                        formControlName="genres">
+                  <option *ngFor="let gen of genres"
+                          [value]="gen">
+                    {{gen}}</option>
+                </select>
+              </div>
+              <div *ngIf="!editar">
+                <label for="newSelectZ">Genres</label>
+                <select class="form-select" id="newSelectZ"
+                        aria-label="Genres" multiple
+                        formControlName="genres" required>
+                  <option *ngFor="let gen of genres"
+                          [value]="gen">
+                    {{gen}}</option>
+                </select>
+              </div>
+
+              <!-- Add New Genre -->
+              <div class="row mt-3">
+                <div class="col-8">
+                  <div [formGroup]="mynewGenre" class="form-floating mb-3">
+                    <input
+                      type="text" class="form-control"
+                      id="newGenreZ"
+                      formControlName="newGenre"
+                      placeholder="New Genre">
+                    <label for="newGenreZ">
+                      New Genre</label>
+                  </div>
+
+                </div>
+                <div class="col-4 pt-2">
+                  <h3><i class="fas fa-plus-circle pointer"
+                         (click)="addNewGenre(newGenre)"></i></h3>
+
+                </div>
+              </div>
+
+              <fieldset formGroupName="imdb">
+                <legend>IMDB</legend>
+                <div class="form-floating mb-3">
+                  <input formControlName="rating"
+                         type="number" class="form-control"
+                         id="ratingZ" value="{{rating}}"
+                         placeholder="Rating">
+                  <label for="ratingZ">
+                    Rating</label>
+                </div>
+                <div class="form-floating mb-3">
+                  <input formControlName="votes"
+                         type="number" class="form-control"
+                         id="votesZ" value="{{votes}}"
+                         placeholder="Votes">
+                  <label for="votesZ">
+                    Votes</label>
+                </div>
+              </fieldset>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary"
+                      data-bs-dismiss="modal">Close</button>
+              <button [disabled]="formNew.invalid"
+                type="submit" class="btn btn-primary"
+                      data-bs-dismiss="modal">Save changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
