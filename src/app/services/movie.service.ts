@@ -8,7 +8,10 @@ import {Movie} from "../common/movie";
 })
 export class MovieService {
 
+/*
   baseURI = 'http://localhost:3000/api/movies/';
+*/
+  baseURI = 'https://nodemongo2023.onrender.com/api/movies';
   constructor(private http: HttpClient) { }
 
   getMovieList(): Observable<Movie[]>{

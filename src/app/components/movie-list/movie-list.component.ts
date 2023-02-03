@@ -116,6 +116,7 @@ formMovie: FormGroup = this.formBuilder.group({
     if (form.valid) {
       if (this.editar) {
         const id = this.formMovie.getRawValue()._id;
+        console.log(this.formMovie.getRawValue());
         this.movieService.updateMovie(id, this.formMovie.getRawValue())
           .subscribe(data => this.loadMovies());
       } else {
